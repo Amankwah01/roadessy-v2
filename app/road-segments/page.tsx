@@ -1,5 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
 import { OverviewDashboard } from "@/components/dashboard-overview";
+import { DataTable } from "@/components/data/data-table";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,9 +14,33 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { columns } from "@/components/data/columns";
+import getData from "@/components/data/data";
 
+function Home() {
+  const [data, setData] = useState<any[]>([]);
+  const [cols, setCols] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function Home() {
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const resolvedCols = await columns;
+        const resolvedData = await getData();
+        if (mounted) {
+          setCols(resolvedCols ?? []);
+          setData(resolvedData ?? []);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <div className="p-4 flex-col">
       <OverviewDashboard />
@@ -24,9 +50,13 @@ export default function Home() {
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="photos">Photos</TabsTrigger>
-              <TabsTrigger value="condition-ratings">Condition ratings</TabsTrigger>
+              <TabsTrigger value="condition-ratings">
+                Condition ratings
+              </TabsTrigger>
               <TabsTrigger value="defects">Defects</TabsTrigger>
-              <TabsTrigger value="inspection-history">Inspection history</TabsTrigger>
+              <TabsTrigger value="inspection-history">
+                Inspection history
+              </TabsTrigger>
               <TabsTrigger value="inspector-notes">Inspector notes</TabsTrigger>
             </TabsList>
             <TabsContent value="overview">
@@ -39,14 +69,11 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
-                  <div className="grid gap-3">
-                    <Label htmlFor="tabs-demo-name">Name</Label>
-                    <Input id="tabs-demo-name" defaultValue="Pedro Duarte" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="tabs-demo-username">Username</Label>
-                    <Input id="tabs-demo-username" defaultValue="@peduarte" />
-                  </div>
+                  {!loading ? (
+                    <DataTable columns={cols} data={data} />
+                  ) : (
+                    <div>Loading...</div>
+                  )}
                 </CardContent>
                 <CardFooter>
                   <Button>Save changes</Button>
@@ -83,3 +110,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;
