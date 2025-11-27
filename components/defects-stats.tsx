@@ -26,20 +26,20 @@ export function DefectStats() {
   ];
   const totalRoads = content.reduce((sum, d) => sum + d.value, 0);
   return (
-    <Card className="w-full mb-4 h-full">
+    <Card className="w-full mb-4 h-full px-10">
       <CardHeader>
         <CardTitle className="text-xl">Defects Stats</CardTitle>
         {/* <CardDescription>{item.description}</CardDescription>
             <CardAction>Card Action</CardAction> */}
       </CardHeader>
-      <CardContent className="grid grid-cols-5 gap-x-4 -mt-7">
+      <CardContent className="flex flex-col gap-y-1.5 -mt-7">
         {content.map((item) => {
           const fill = Math.min(
             Math.max((item.value / totalRoads) * 100, 0),
             100
           );
           return (
-            <div className=" flex flex-col p-2" key={item.title}>
+            <div className="flex flex-col py-2" key={item.title}>
               <p className="text-xl">{item.title}</p>
               <p className="text-lg font-mono">
                 {item.value}/{totalRoads}

@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { columns } from "@/components/data/columns";
 import getData from "@/components/data/data";
 
-function Home() {
+function RoadSegments() {
   const [data, setData] = useState<any[]>([]);
   const [cols, setCols] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,13 +62,13 @@ function Home() {
             <TabsContent value="overview">
               <Card>
                 <CardHeader>
-                  <CardTitle>Account</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-xl">Road Segments</CardTitle>
+                  {/* <CardDescription>
                     Make changes to your account here. Click save when
                     you&apos;re done.
-                  </CardDescription>
+                  </CardDescription> */}
                 </CardHeader>
-                <CardContent className="grid gap-6">
+                <CardContent className="grid gap-2">
                   {!loading ? (
                     <DataTable columns={cols} data={data} />
                   ) : (
@@ -111,4 +111,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default RoadSegments;
