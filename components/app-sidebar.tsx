@@ -113,7 +113,7 @@ export function AppSidebar() {
                           className="text-xl"
                           onClick={item.onClick}
                         >
-                          <item.icon />
+                          <item.icon  className="scale-150"/>
                           <span className="">{item.title}</span>
                         </a>
                       </SidebarMenuButton>
