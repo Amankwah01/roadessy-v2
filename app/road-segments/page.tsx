@@ -48,16 +48,20 @@ function RoadSegments() {
         <div className="">
           <Tabs defaultValue="overview">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="photos">Photos</TabsTrigger>
-              <TabsTrigger value="condition-ratings">
-                Condition ratings
-              </TabsTrigger>
-              <TabsTrigger value="defects">Defects</TabsTrigger>
-              <TabsTrigger value="inspection-history">
-                Inspection history
-              </TabsTrigger>
-              <TabsTrigger value="inspector-notes">Inspector notes</TabsTrigger>
+              <TabsTrigger className="border-2" value="overview">
+                Overview 
+              </TabsTrigger> |
+              <TabsTrigger className="border-2" value="photos">
+                Photos 
+              </TabsTrigger> |
+              <TabsTrigger className="border-2" value="condition-ratings">
+                Condition ratings 
+              </TabsTrigger> |
+              <TabsTrigger className="border-2" value="defects">Defects </TabsTrigger> |
+              <TabsTrigger className="border-2" value="inspection-history">
+                Inspection history 
+              </TabsTrigger> |
+              <TabsTrigger className="border-2" value="inspector-notes">Inspector notes</TabsTrigger>
             </TabsList>
             <TabsContent value="overview">
               <Card>

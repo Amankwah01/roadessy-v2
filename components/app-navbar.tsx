@@ -63,7 +63,7 @@ const components: { title: string; href: string; description: string }[] = [
 export function Navigation() {
   const isMobile = useIsMobile();
   return (
-    <nav className="sticky top-0 overflow-hidden w-full flex justify-end items-center bg-background px-2 z-10000 gap-x-2">
+    <nav className="sticky top-0 overflow-hidden w-full flex justify-end items-center bg-background px-2 z-0 gap-x-2">
       {/* Right Side */}
       <NavigationMenu viewport={isMobile}>
         <NavigationMenuList className="flex-wrap">
