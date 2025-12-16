@@ -43,7 +43,7 @@ export function Map({height}: {height?: string}) {
   }, []);
 
   return (
-    <div className="relative w-full h-[60vh]">
+    <div className="relative w-full h-full">
       {/* This is the actual map container */}
       <div ref={mapContainerRef} className="w-full h-full rounded-2xl" />
 

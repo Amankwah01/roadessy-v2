@@ -27,7 +27,7 @@ export function RoadStats() {
    ];
   const totalRoads = content.reduce((sum, d) => sum + d.value, 0);
   return (
-    <Card className="w-full mb-4 h-full">
+    <Card className="w-full h-full">
       <CardHeader>
         <CardTitle className="text-xl">Network Stats</CardTitle>
         {/* <CardDescription>{item.description}</CardDescription>
