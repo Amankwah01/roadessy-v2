@@ -78,7 +78,7 @@ export function AppSidebar() {
     },
     {
       title: "Upload",
-      url: "#",
+      url: "/upload",
       icon: Upload,
     },
     {

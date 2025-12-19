@@ -17,15 +17,17 @@ import Link from "next/link";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type DataColumn = {
-  id: string;
-  status: "pending" | "processing" | "success" | "failed";
-  user: string;
-  name: string;
-  date_uploaded: string;
-  total_distance: number;
-  road_type: string;
-  ave_iri: number;
-  ave_speed: number;
+  id?: string;
+  // table-specific fields used by the columns below
+  road_name?: string;
+  iri?: number | string;
+  iri_inst?: number | string;
+  iri_smartphone?: number | string;
+  speed_3?: number | string;
+  speed_12?: number | string;
+  vert_displacement?: number | string;
+  travel_distance?: number | string;
+  road_condition?: string;
 };
 
 // export const columns: ColumnDef<DataColumn>[] = [
@@ -83,82 +85,90 @@ export const columns: ColumnDef<DataColumn>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
+    accessorKey: "road_name",
+    header: "Road Name",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("road_name")}</div>
+    ),
   },
   {
-    accessorKey: "date_uploaded",
+    accessorKey: "iri",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Date Uploaded
+          IRI
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase text-center">{row.getValue("iri")}</div>
+    ),
+  },
+  {
+    accessorKey: "iri_inst",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          IRI Inst
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase text-center">{row.getValue("iri_inst")}</div>
+    ),
+  },
+  {
+    accessorKey: "iri_smartphone",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          IRI Smart Phone
           <ArrowUpDown />
         </Button>
       );
     },
     cell: ({ row }) => (
       <div className="lowercase text-center">
-        {row.getValue("date_uploaded")}
+        {row.getValue("iri_smartphone")}
       </div>
     ),
   },
+  // {
+  //   accessorKey: "speed",
+  //   header: () => <div className="text-right">Speed</div>,
+  //   cell: ({ row }) => {
+  //     const ave_speed = parseFloat(row.getValue("speed"));
+  //
+  //     // Format the amount as a distance
+  //     const formatted = new Intl.NumberFormat("en-UK", {
+  //       style: "decimal",
+  //       minimumFractionDigits: 2,
+  //       maximumFractionDigits: 2,
+  //     }).format(ave_speed);
+  //
+  //     return (
+  //       <div className="text-right font-medium">
+  //         {formatted} km<sup>2</sup>/h
+  //       </div>
+  //     );
+  //   },
+  // },
   {
-    accessorKey: "total_distance",
-    header: () => <div className="text-right">Total Distance</div>,
+    accessorKey: "speed_3",
+    header: () => <div className="text-right">Speed_3</div>,
     cell: ({ row }) => {
-      const total_distance = parseFloat(row.getValue("total_distance"));
-
-      // Format the amount as a distance
-      const formatted = new Intl.NumberFormat("en-UK", {
-        style: "unit",
-        unit: "kilometer",
-      }).format(total_distance);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "ave_iri",
-    header: () => <div className="text-right">Average IRI</div>,
-    cell: ({ row }) => {
-      const ave_iri = parseFloat(row.getValue("ave_iri"));
-
-      // Format the amount as a distance
-      const formatted = new Intl.NumberFormat("en-UK", {
-        style: "decimal",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(ave_iri);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "road_type",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Road Type
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("road_type")}</div>
-    ),
-  },
-  {
-    accessorKey: "ave_speed",
-    header: () => <div className="text-right">Average Speed</div>,
-    cell: ({ row }) => {
-      const ave_speed = parseFloat(row.getValue("ave_speed"));
+      const ave_speed = parseFloat(row.getValue("speed_3"));
 
       // Format the amount as a distance
       const formatted = new Intl.NumberFormat("en-UK", {
@@ -175,7 +185,76 @@ export const columns: ColumnDef<DataColumn>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "speed_12",
+    header: () => <div className="text-right">Speed_12</div>,
+    cell: ({ row }) => {
+      const ave_speed = parseFloat(row.getValue("speed_12"));
+
+      // Format the amount as a distance
+      const formatted = new Intl.NumberFormat("en-UK", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(ave_speed);
+
+      return (
+        <div className="text-right font-medium">
+          {formatted} km<sup>2</sup>/h
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "vert_displacement",
+    header: () => <div className="text-right">Vertical Displacement</div>,
+    cell: ({ row }) => {
+      const total_distance = parseFloat(row.getValue("vert_displacement"));
+
+      // Format the amount as a distance
+      const formatted = new Intl.NumberFormat("en-UK", {
+        style: "unit",
+        unit: "kilometer",
+      }).format(total_distance);
+
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "travel_distance",
+    header: () => <div className="text-right">Travel Distance</div>,
+    cell: ({ row }) => {
+      const total_distance = parseFloat(row.getValue("travel_distance"));
+
+      // Format the amount as a distance
+      const formatted = new Intl.NumberFormat("en-UK", {
+        style: "unit",
+        unit: "kilometer",
+      }).format(total_distance);
+
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+
+  {
+    accessorKey: "road_type",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Road Type
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("road_type") ?? "Highway"}</div>
+    ),
+  },
+
+  {
+    accessorKey: "road_condition",
     header: ({ column }) => {
       return (
         <Button
@@ -188,7 +267,7 @@ export const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("status")}</div>
+      <div className="lowercase">{row.getValue("road_condition")}</div>
     ),
   },
   {
@@ -208,7 +287,7 @@ export const columns: ColumnDef<DataColumn>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(road.name)}
+              onClick={() => navigator.clipboard.writeText(road.road_name as string)}
             >
               Copy road name
             </DropdownMenuItem>

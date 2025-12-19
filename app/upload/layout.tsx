@@ -5,6 +5,7 @@ import "@/app/globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Navigation } from "@/components/app-navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,13 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <AppSidebar />
-            <main className="w-full">{children}</main>
+            <main className="w-full tracking-tight">
+              <div className="sticky top-0 overflow-hidden w-full flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-background z-10000">
+                <SidebarTrigger />
+                <Navigation />
+              </div>
+              {children}
+            </main>
           </SidebarProvider>
         </ThemeProvider>
       </body>

@@ -17,62 +17,51 @@ import {
 import { Badge } from "./ui/badge";
 import { info } from "console";
 
-const priority = [
-  {
-    road: "Road5, Roadessy",
-    // avatar: "https://github.com/evilrabbit.png",
-    info: "Urgent: Structural Repair",
-    status: "Inspection Needed",
-  },
-  {
-    road: "Road4, Roadessy",
-    // avatar: "https://github.com/evilrabbit.png",
-    info: "Dominant: Potholes",
-    status: "Reconstruction",
-  },
-  {
-    road: "Road3, Roadessy",
-    // avatar: "https://github.com/shadcn.png",
-    info: "Major Repair",
-    status: "Major Repair",
-  },
-  {
-    road: "Road2, Roadessy",
-    // avatar: "https://github.com/maxleiter.png",
-    info: "Dominant: Rutting",
-    status: "Dominant: Cracking",
-  },
-  {
-    road: "Road1, Roadessy",
-    // avatar: "https://github.com/evilrabbit.png",
-    info: "IRI: 3.5m/km",
-    status: "Reconstruction",
-  },
-];
+type PriorityItem = {
+  road: string;
+  info: string;
+  status: string;
+};
 
-export default function Prioritization() {
+export default function Prioritization({
+  priority,
+}: {
+  priority?: PriorityItem[];
+}) {
+  const defaultPriority: PriorityItem[] = [
+    {
+      road: "Road5, Roadessy",
+      info: "Urgent: Structural Repair",
+      status: "Inspection Needed",
+    },
+    {
+      road: "Road4, Roadessy",
+      info: "Dominant: Potholes",
+      status: "Reconstruction",
+    },
+    { road: "Road3, Roadessy", info: "Major Repair", status: "Major Repair" },
+    {
+      road: "Road2, Roadessy",
+      info: "Dominant: Rutting",
+      status: "Dominant: Cracking",
+    },
+    { road: "Road1, Roadessy", info: "IRI: 3.5m/km", status: "Reconstruction" },
+  ];
+
+  const items = priority && priority.length ? priority : defaultPriority;
+
   return (
     <Card className="px-10">
       <CardHeader>
         <CardTitle className="text-xl">
           Top 5 Maintenance Prioritization
         </CardTitle>
-        {/* <CardDescription>
-                Make changes to your account here. Click save when you&apos;re
-                done.
-              </CardDescription> */}
       </CardHeader>
       <CardContent className="grid gap-2 -mt-6">
         <ItemGroup>
-          {priority.map((person, index) => (
+          {items.map((person, index) => (
             <React.Fragment key={person.road}>
               <Item key={person.road}>
-                {/* <ItemMedia>
-                  <Avatar>
-                    <AvatarImage src={person.avatar} className="grayscale" />
-                    <AvatarFallback>{person.username.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                </ItemMedia> */}
                 <ItemContent className="gap-1">
                   <ItemTitle className=" text-lg">{person.road}</ItemTitle>
                   <ItemDescription>{person.info}</ItemDescription>
@@ -98,14 +87,11 @@ export default function Prioritization() {
                   </Button>
                 </ItemActions>
               </Item>
-              {index !== priority.length - 1 && <ItemSeparator />}
+              {index !== items.length - 1 && <ItemSeparator />}
             </React.Fragment>
           ))}
         </ItemGroup>
       </CardContent>
-      {/* <CardFooter>
-              <Button>Save changes</Button>
-            </CardFooter> */}
     </Card>
   );
 }
