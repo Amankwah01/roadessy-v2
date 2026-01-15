@@ -1,31 +1,36 @@
 import { OverviewDashboard } from "@/components/dashboard-overview";
-import { columns } from "@/components/data/columns";
 import DataTable from "@/components/data/data-table";
-import DataTableClient from "@/components/data/data-table-client";
-import pool from "@/lib/db";
+import { AIAssistantSheet } from "@/components/ai/ai-assistant-sheet";
+import pool, { safeQuery } from "@/lib/db";
 
-export default async function Home() {
+async function fetchDashboardData() {
   try {
-    const res = await pool.query(
+    const res = await safeQuery(
       `SELECT id, road_name, iri, speed, latitude, longitude, road_condition FROM central_reg_data ORDER BY id`
     );
-    const rows = res.rows ?? [];
-
-    return (
-      <div className="p-4 flex-col">
-        <OverviewDashboard />
-        <div className="mt-4">
-          <DataTable  />
-        </div>
-      </div>
-    );
+    return res.rows ?? [];
   } catch (error) {
     console.error("Dashboard DB fetch error:", error);
-    return (
-      <div className="p-4">
-        <OverviewDashboard />
-        <div className="mt-4">Failed to load dashboard data.</div>
-      </div>
-    );
+    return null;
   }
+}
+
+export default async function Home() {
+  await fetchDashboardData();
+
+  return (
+    <div className="p-4 flex-col">
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <OverviewDashboard />
+        </div>
+      </div>
+      <div className="mt-4">
+        <DataTable />
+      </div>
+      <div className="relative flex justify-end">
+        <AIAssistantSheet />
+      </div>
+    </div>
+  );
 }

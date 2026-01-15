@@ -33,6 +33,28 @@ export function Map({height}: {height?: string}) {
     );
 
     map.current.on("load", () => {
+      if (!map.current) return;
+
+      //  Prevent duplicate source
+      if (!map.current.getSource("roads")) {
+        map.current.addSource("roads", {
+          type: "geojson",
+          data: "/api/roads/",
+        });
+      }
+      //  Prevent duplicate layer
+      if (!map.current.getLayer("roads-layer")) {
+        map.current.addLayer({
+          id: "roads-layer",
+          type: "line",
+          source: "roads",
+          paint: {
+            "line-width": 3,
+            "line-color": "#ff5a1f",
+          },
+        });
+      }
+
       setLoaded(true);
     });
 

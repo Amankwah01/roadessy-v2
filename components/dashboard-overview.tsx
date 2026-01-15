@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import pool from "@/lib/db";
+import pool, { safeQuery } from "@/lib/db";
 
 export async function OverviewDashboard() {
   const defaults = {
@@ -25,33 +25,35 @@ export async function OverviewDashboard() {
   let avgPci = defaults.avgPci;
 
   try {
-    const res = await pool.query(
+    const res: any = await safeQuery(
       "SELECT COUNT(DISTINCT road_name) AS c FROM central_reg_data"
     );
     totalRoads = Number(res.rows?.[0]?.c ?? totalRoads);
   } catch (e) {}
 
   try {
-    const res = await pool.query("SELECT COUNT(*) AS c FROM central_reg_data");
+    const res: any = await safeQuery(
+      "SELECT COUNT(*) AS c FROM central_reg_data"
+    );
     totalSegments = Number(res.rows?.[0]?.c ?? totalSegments);
   } catch (e) {}
 
   try {
-    const res = await pool.query(
+    const res: any = await safeQuery(
       "SELECT COUNT(*) AS c FROM central_reg_data WHERE road_condition IS NOT NULL"
     );
     inspectionsCompleted = Number(res.rows?.[0]?.c ?? inspectionsCompleted);
   } catch (e) {}
 
   try {
-    const res = await pool.query(
+    const res: any = await safeQuery(
       "SELECT COUNT(*) AS c FROM central_reg_data WHERE iri IS NOT NULL AND iri > 150"
     );
     roadsNeeding = Number(res.rows?.[0]?.c ?? roadsNeeding);
   } catch (e) {}
 
   try {
-    const res = await pool.query(
+    const res: any = await safeQuery(
       "SELECT AVG(pci_score) AS a FROM central_reg_data WHERE pci_score IS NOT NULL"
     );
     const raw = res.rows?.[0]?.a;

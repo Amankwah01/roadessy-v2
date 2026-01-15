@@ -1,6 +1,6 @@
 import { ProgressBar } from "./progress";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import pool from "@/lib/db";
+import pool, { safeQuery } from "@/lib/db";
 
 type StatItem = { title: string; value: number };
 
@@ -42,42 +42,44 @@ export default async function RoadStats({ content }: { content?: StatItem[] }) {
   }
 
   // Server-side fetch: attempt to compute real metrics; fall back to defaults on error
-  let totalRoads = defaultContent[0].value;
-  let totalSegments = defaultContent[1].value;
-  let inspectionsCompleted = defaultContent[2].value;
-  let roadsNeeding = defaultContent[3].value;
-  let avgIri = defaultContent[4].value;
+  let totalRoads = 1250;
+  let totalSegments = 3400;
+  let inspectionsCompleted = 2750;
+  let roadsNeeding = 150;
+  let avgIri = 85;
 
   try {
-    const res1 = await pool.query(
+    const res1: any = await safeQuery(
       "SELECT COUNT(DISTINCT road_name) AS c FROM central_reg_data"
     );
-    totalRoads = Number(res1.rows?.[1]?.c ?? totalRoads);
+    totalRoads = Number(res1.rows?.[0]?.c ?? totalRoads);
   } catch (e) {
     // table may not exist or column differs; keep default
   }
 
   try {
-    const res2 = await pool.query("SELECT COUNT(*) AS c FROM central_reg_data");
+    const res2: any = await safeQuery(
+      "SELECT COUNT(*) AS c FROM central_reg_data"
+    );
     totalSegments = Number(res2.rows?.[0]?.c ?? totalSegments);
   } catch (e) {}
 
   try {
-    const res3 = await pool.query(
+    const res3: any = await safeQuery(
       "SELECT COUNT(*) AS c FROM inspections WHERE status = 'completed'"
     );
     inspectionsCompleted = Number(res3.rows?.[0]?.c ?? inspectionsCompleted);
   } catch (e) {}
 
   try {
-    const res4 = await pool.query(
+    const res4: any = await safeQuery(
       "SELECT COUNT(*) AS c FROM central_reg_data WHERE iri IS NOT NULL AND iri > 150"
     );
     roadsNeeding = Number(res4.rows?.[0]?.c ?? roadsNeeding);
   } catch (e) {}
 
   try {
-    const res5 = await pool.query(
+    const res5: any = await safeQuery(
       "SELECT AVG(iri) AS a FROM central_reg_data WHERE iri IS NOT NULL"
     );
     const raw = res5.rows?.[0]?.a;

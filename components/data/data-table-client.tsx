@@ -1,4 +1,6 @@
 "use client";
+// typescript
+// File: `components/data/data-table-client.tsx`
 import React from "react";
 import {
   ColumnDef,
@@ -33,6 +35,19 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { menuItems } from "./dropdown_data";
+
+/* Local types for the dropdown data */
+type MenuChild = {
+  id: string | number;
+  label: string;
+  value?: string | number;
+};
+
+type Menu = {
+  id: string | number;
+  label: string;
+  children?: MenuChild[];
+};
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -69,31 +84,113 @@ export default function DataTableClient<TData, TValue>({
       rowSelection,
     },
   });
-  const [checkedItems, setCheckedItems] = React.useState<
-    Record<string, boolean>
+
+  // track multiple selected children per menu (menu.id -> array of child ids)
+  const [selectedOptions, setSelectedOptions] = React.useState<
+    Record<string | number, Array<string | number>>
   >({});
 
-  const handleToggle = (key: string | number) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  // typed child parameter so child.id / child.value / child.label are available
+  const handleSelect = (
+    menuId: string | number,
+    child: MenuChild,
+    checked = true
+  ) => {
+    setSelectedOptions((prev) => {
+      const prevArr = prev[menuId] ?? [];
+      let nextArr: Array<string | number>;
+      if (checked) {
+        // add if not present
+        nextArr = prevArr.includes(child.id) ? prevArr : [...prevArr, child.id];
+      } else {
+        // remove
+        nextArr = prevArr.filter((v) => v !== child.id);
+      }
+      return { ...prev, [menuId]: nextArr };
+    });
+
+    // derive filter values from the menu's selected children labels/values
+    // we will compute the full selected set for this menu and apply it
+    const menuKey = menuId.toString();
+    const targetColumnId =
+      typeof child.value === "string" && child.value.length > 0
+        ? child.value
+        : menuToColumnMap[menuKey] ?? menuKey;
+
+    // compute the new selected labels for this menu after applying the change
+    const prevSelected = selectedOptions[menuId] ?? [];
+    const willBeSelected = checked
+      ? Array.from(new Set([...prevSelected, child.id]))
+      : prevSelected.filter((v) => v !== child.id);
+
+    // map ids to labels/values for filter comparison
+    const labelValues = willBeSelected.map((id) => {
+      // try to find the child's label from menuItems
+      for (const m of typedMenuItems) {
+        if (m.id === menuId && m.children) {
+          const found = m.children.find((c) => c.id === id);
+          if (found)
+            return typeof found.value === "string" && found.value.length > 0
+              ? found.value
+              : String(found.label);
+        }
+      }
+      return String(id);
+    });
+
+    const column = table.getColumn(targetColumnId);
+    if (column) {
+      // if none selected -> clear filter
+      if (!labelValues.length) column.setFilterValue("");
+      else if (labelValues.length === 1)
+        column.setFilterValue(labelValues[0] as any);
+      else column.setFilterValue(labelValues as any);
+    }
   };
+
+  // assert the imported menuItems shape to our Menu[] type so mapping is typed
+  const typedMenuItems = menuItems as Menu[];
+
+  // central mapping so both the dropdown handler and the input can resolve column ids
+  const menuToColumnMap: Record<string, string> = {
+    region: "region",
+    road_type: "road_type",
+    surface_type: "surface_type",
+    condition: "road_condition",
+  };
+
+  // resolve which column the free-text input should target:
+  // prefer the first menu with a selected option, otherwise default to 'road_name'
+  const resolveInputTarget = () => {
+    for (const m of typedMenuItems) {
+      const sel = selectedOptions[m.id];
+      if (sel !== null && sel !== undefined) {
+        const key = m.id.toString();
+        return (menuToColumnMap[key] ?? key) as string;
+      }
+    }
+    return "road_name";
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center gap-x-1 py-4">
         <Input
-          placeholder="Filter..."
+          placeholder={`Filter ...`}
           value={
-            (table.getColumn("road_name")?.getFilterValue() as string) ?? ""
+            (table
+              .getColumn('road_name')
+              ?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("road_name")?.setFilterValue(event.target.value)
+            table
+              .getColumn('road_name')
+              ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <div className="grid grid-cols-6 gap-x-4 w-full">
-          {menuItems.map((menu) => (
+          {typedMenuItems.map((menu) => (
             <DropdownMenu key={menu.id}>
               <DropdownMenuTrigger asChild>
                 <Button className="w-full justify-between" variant="outline">
@@ -107,8 +204,10 @@ export default function DataTableClient<TData, TValue>({
                 {menu.children?.map((child) => (
                   <DropdownMenuCheckboxItem
                     key={child.id}
-                    checked={!!checkedItems[child.id]}
-                    onCheckedChange={() => handleToggle(child.id)}
+                    checked={selectedOptions[menu.id]?.includes(child.id) ?? false}
+                    onCheckedChange={(checked) =>
+                      handleSelect(menu.id, child, !!checked)
+                    }
                   >
                     {child.label}
                   </DropdownMenuCheckboxItem>
@@ -142,6 +241,7 @@ export default function DataTableClient<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

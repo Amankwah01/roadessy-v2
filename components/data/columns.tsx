@@ -249,7 +249,7 @@ export const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("road_type") ?? "Highway"}</div>
+      <div className="capitalize">{row.getValue("road_type")}</div>
     ),
   },
 
