@@ -95,7 +95,7 @@ export function AppSidebar() {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel className="flex text-xl gap-x-2 pt-9 pb-10 justify-center items-center">
-              <MapPinCheck />
+              <MapPinCheck className="scale-150" />
               Roadessy
             </SidebarGroupLabel>
             <Separator className="" />
@@ -113,7 +113,7 @@ export function AppSidebar() {
                           className="text-xl"
                           onClick={item.onClick}
                         >
-                          <item.icon  className="scale-150"/>
+                          <item.icon className="scale-150" />
                           <span className="">{item.title}</span>
                         </a>
                       </SidebarMenuButton>

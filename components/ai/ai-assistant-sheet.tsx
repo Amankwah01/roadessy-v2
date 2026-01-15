@@ -47,13 +47,40 @@ export function AIAssistantSheet({
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{
+    message: string;
+    type?: string;
+    details?: {
+      quotaLimit?: number;
+      retryAfterSeconds?: number;
+      retryTime?: string;
+    };
+  } | null>(null);
+  const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Handle retry countdown for quota errors
+  useEffect(() => {
+    if (retryCountdown === null) return;
+
+    if (retryCountdown <= 0) {
+      setRetryCountdown(null);
+      setError(null);
+      return;
+    }
+
+    const timer = setTimeout(
+      () => setRetryCountdown((prev) => (prev ? prev - 1 : null)),
+      1000
+    );
+
+    return () => clearTimeout(timer);
+  }, [retryCountdown]);
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -88,8 +115,25 @@ export function AIAssistantSheet({
 
       if (!response.ok) {
         const errorData = await response.json();
+
+        // Handle quota errors specially
+        if (
+          errorData.type === "quota_exceeded" &&
+          errorData.details?.retryAfterSeconds
+        ) {
+          setError({
+            message: errorData.message || "API quota exceeded",
+            type: "quota_exceeded",
+            details: errorData.details,
+          });
+          setRetryCountdown(Math.ceil(errorData.details.retryAfterSeconds));
+          throw new Error(errorData.message || "API quota exceeded");
+        }
+
         throw new Error(
-          errorData.error || "Failed to get response from assistant"
+          errorData.error ||
+            errorData.message ||
+            "Failed to get response from assistant"
         );
       }
 
@@ -105,7 +149,6 @@ export function AIAssistantSheet({
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
 
       const errorAssistantMessage: Message = {
         role: "assistant",
@@ -132,24 +175,24 @@ export function AIAssistantSheet({
         <Button
           variant="outline"
           size="icon"
-          className="relative"
+          className="relative invert hover:bg-gray-200"
           title="Road Inspection AI Assistant"
         >
           <MessageCircle className="h-4 w-4" />
-          <span className="absolute top-0 right-0 h-2 w-2 bg-green-500 rounded-full animate-pulse" />
+          <span className="absolute top-0 right-0 h-2 w-2 bg-black rounded-full animate-pulse" />
         </Button>
       </SheetTrigger>
 
       <SheetContent
         side="right"
-        className="w-full sm:w-[540px] flex flex-col p-0"
+        className="w-full sm:w-[540px] flex flex-col p-0 z-100"
       >
         <SheetHeader className="border-b px-6 py-4">
           <SheetTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
             Road Inspection Assistant
           </SheetTitle>
-          <SheetDescription>
+          <SheetDescription>  
             Ask me about road segments, defects, inspections, and repairs
           </SheetDescription>
         </SheetHeader>
@@ -164,19 +207,19 @@ export function AIAssistantSheet({
                 }`}
               >
                 {message.role === "assistant" && (
-                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                    <Info className="h-4 w-4 text-blue-600" />
+                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                    <Info className="h-4 w-4 text-black-900" />
                   </div>
                 )}
 
                 <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg overflow-hidden ${
                     message.role === "user"
-                      ? "bg-blue-600 text-white rounded-br-none"
+                      ? "bg-gray-900 text-white rounded-br-none"
                       : "bg-gray-200 text-gray-900 rounded-bl-none"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">
+                  <p className="text-sm whitespace-pre-wrap wrap-break-word word-break">
                     {message.content}
                   </p>
                   <span className="text-xs opacity-70 mt-1 block">
@@ -188,8 +231,8 @@ export function AIAssistantSheet({
                 </div>
 
                 {message.role === "user" && (
-                  <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  <div className="h-8 w-8 rounded-full bg-black flex items-center justify-center shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
                   </div>
                 )}
               </div>
@@ -207,9 +250,43 @@ export function AIAssistantSheet({
             )}
 
             {error && (
-              <div className="flex gap-3 items-start bg-red-50 p-3 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                <p className="text-sm text-red-700">{error}</p>
+              <div
+                className={`flex gap-3 items-start p-4 rounded-lg ${
+                  error.type === "quota_exceeded"
+                    ? "bg-amber-50 border border-amber-200"
+                    : "bg-red-50 border border-red-200"
+                }`}
+              >
+                <AlertCircle
+                  className={`h-5 w-5 shrink-0 mt-0.5 ${
+                    error.type === "quota_exceeded"
+                      ? "text-amber-600"
+                      : "text-red-600"
+                  }`}
+                />
+                <div className="flex-1">
+                  <p
+                    className={`text-sm font-medium ${
+                      error.type === "quota_exceeded"
+                        ? "text-amber-900"
+                        : "text-red-900"
+                    }`}
+                  >
+                    {error.message}
+                  </p>
+                  {error.type === "quota_exceeded" && error.details && (
+                    <div className="mt-2 space-y-1 text-xs">
+                      <p className="text-amber-800">
+                        Daily limit: {error.details.quotaLimit} requests
+                      </p>
+                      {retryCountdown !== null && (
+                        <p className="font-medium text-amber-700">
+                          Try again in {retryCountdown}s
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 

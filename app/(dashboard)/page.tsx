@@ -29,7 +29,7 @@ export default async function Home() {
         <DataTable />
       </div>
       <div className="relative flex justify-end">
-        <AIAssistantSheet />
+        
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ type RoadSegmentRow = {
   speed: number | null;
   latitude: number | null;
   longitude: number | null;
-  road_condition: string | null;
+  road_condition: boolean | null;
 };
 
 export const getRoadSegmentsTool = tool(
@@ -117,11 +117,11 @@ export const globalRoadStatsTool = tool(
         AVG(speed)                                           AS avg_speed,
         MIN(speed)                                           AS min_speed,
         MAX(speed)                                           AS max_speed,
-        COUNT(*) FILTER (WHERE road_condition = "Very Good") AS very_good_segments,
-        COUNT(*) FILTER (WHERE road_condition = "Good") AS good_segments,
-        COUNT(*) FILTER (WHERE road_condition = "Fair") AS fair_segments,
-        COUNT(*) FILTER (WHERE road_condition = "Poor") AS poor_segments,
-        COUNT(*) FILTER (WHERE road_condition = "Very Poor") AS very_poor_segments
+        COUNT(*) FILTER (WHERE road_condition = "very good") AS very_good_segments,
+        COUNT(*) FILTER (WHERE road_condition = "good") AS good_segments,
+        COUNT(*) FILTER (WHERE road_condition = "fair") AS fair_segments,
+        COUNT(*) FILTER (WHERE road_condition = "poor") AS poor_segments,
+        COUNT(*) FILTER (WHERE road_condition = "very poor") AS very_poor_segments
       FROM central_reg_data
     `);
 
@@ -199,7 +199,7 @@ export const roadSummaryTool = tool(
         COUNT(*)::bigint        AS segments,
         AVG(iri)                AS avg_iri,
         AVG(speed)              AS avg_speed,
-        COUNT(*) FILTER (WHERE road_condition = 'poor' OR road_condition = 'very poor') AS bad_segments
+        COUNT(*) FILTER (WHERE road_condition = false) AS bad_segments
       FROM central_reg_data
       WHERE road_name = $1
       GROUP BY road_name
@@ -283,16 +283,24 @@ export const dataHealthTool = tool(
    10. GET ROAD SEGMENTS BY CONDITION
 ============================================================ */
 export const getRoadSegmentsByConditionTool = tool(
-  async (input: { condition: string; lastId?: number; limit?: number }) => {
-    const validConditions = ["very good", "good", "fair", "poor", "very poor"];
+  async (input: {
+    condition: string;
+    lastId?: number;
+    limit?: number;
+  }) => {
+    const validConditions = [
+      "very good",
+      "good",
+      "fair",
+      "poor",
+      "very poor",
+    ];
     const condition = input.condition.toLowerCase();
 
     if (!validConditions.includes(condition)) {
       return JSON.stringify({
         success: false,
-        error: `Invalid condition. Must be one of: ${validConditions.join(
-          ", "
-        )}`,
+        error: `Invalid condition. Must be one of: ${validConditions.join(", ")}`,
       });
     }
 

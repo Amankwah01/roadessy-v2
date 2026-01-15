@@ -261,7 +261,7 @@ export const columns: ColumnDef<DataColumn>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Condition
           <ArrowUpDown />
         </Button>
       );
