@@ -104,9 +104,9 @@ export const columns: ColumnDef<DataColumn>[] = [
         </Button>
       );
     },
-        cell: ({ row }) => (
+    cell: ({ row }) => (
       <div className="lowercase text-center">{row.getValue("iri")}</div>
-        ),
+    ),
   },
   {
     accessorKey: "iri_inst",
@@ -125,26 +125,7 @@ export const columns: ColumnDef<DataColumn>[] = [
       <div className="lowercase text-center">{row.getValue("iri_inst")}</div>
     ),
   },
-  
-  {
-    accessorKey: "iri_smartphone",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          IRI Smart Phone
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase text-center">
-        {row.getValue("iri_smartphone")}
-      </div>
-    ),
-  },
+
   {
     accessorKey: "iri_smartphone",
     header: ({ column }) => {
@@ -184,7 +165,7 @@ export const columns: ColumnDef<DataColumn>[] = [
   //     );
   //   },
   // },
-<<<<<<< HEAD
+  // conflict markers removed - keep expanded speed_* columns below
   // {
   //   accessorKey: "speed_3",
   //   header: () => <div className="text-right">Speed_3</div>,
@@ -240,7 +221,6 @@ export const columns: ColumnDef<DataColumn>[] = [
   //     return <div className="text-right font-medium">{formatted}</div>;
   //   },
   // },
-=======
   {
     accessorKey: "speed_3",
     header: () => <div className="text-right">Speed_3</div>,
@@ -296,7 +276,7 @@ export const columns: ColumnDef<DataColumn>[] = [
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
->>>>>>> origin/master
+  // end merge cleanup
   {
     accessorKey: "travel_distance",
     header: () => <div className="text-right">Travel Distance</div>,
@@ -365,7 +345,9 @@ export const columns: ColumnDef<DataColumn>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(road.road_name as string)}
+              onClick={() =>
+                navigator.clipboard.writeText(road.road_name as string)
+              }
             >
               Copy road name
             </DropdownMenuItem>
