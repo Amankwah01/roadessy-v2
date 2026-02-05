@@ -18,7 +18,8 @@ const PDFViewerComponent = dynamic(
         <p>Loading the PDF Viewer...</p>
       </div>
     ),
-  },
+<<<<<<< HEAD
+    },
 );
 
 export default function ReportPageClient() {

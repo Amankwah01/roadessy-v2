@@ -12,13 +12,13 @@ export async function GET() {
             'geometry', ST_AsGeoJSON(geom)::jsonb,
             'properties', jsonb_build_object(
               'id', gid,
-              'road_name', name
-              
+              'road_name', roadname,
+              'condition', condition
             )
           )
         )
       ) AS geojson
-      FROM roads_ashanti
+          FROM roads_ghana_final
     `);
 
     return NextResponse.json(rows[0].geojson);
@@ -26,7 +26,7 @@ export async function GET() {
     console.error(err);
     return NextResponse.json(
       { error: "Failed to load roads" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

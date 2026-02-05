@@ -17,14 +17,15 @@ import Link from "next/link";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type DataColumn = {
-  id?: number;
+  id?: string;
   // table-specific fields used by the columns below
   road_name?: string;
-  iri_smartphone?: number | string;
+  iri?: number | string;
   iri_inst?: number | string;
-  // speed_3?: number | string;
-  // speed_12?: number | string;
-  // vert_displacement?: number | string;
+  iri_smartphone?: number | string;
+  speed_3?: number | string;
+  speed_12?: number | string;
+  vert_displacement?: number | string;
   travel_distance?: number | string;
   road_condition?: string;
 };
@@ -91,21 +92,21 @@ export const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   {
-    accessorKey: "iri_smartphone",
+    accessorKey: "iri",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          IRI Smartphone
+          IRI
           <ArrowUpDown />
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="lowercase text-center">{row.getValue("iri_smartphone")}</div>
-    ),
+        cell: ({ row }) => (
+      <div className="lowercase text-center">{row.getValue("iri")}</div>
+        ),
   },
   {
     accessorKey: "iri_inst",
@@ -125,6 +126,44 @@ export const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   
+  {
+    accessorKey: "iri_smartphone",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          IRI Smart Phone
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase text-center">
+        {row.getValue("iri_smartphone")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "iri_smartphone",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          IRI Smart Phone
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase text-center">
+        {row.getValue("iri_smartphone")}
+      </div>
+    ),
+  },
   // {
   //   accessorKey: "speed",
   //   header: () => <div className="text-right">Speed</div>,
@@ -145,6 +184,7 @@ export const columns: ColumnDef<DataColumn>[] = [
   //     );
   //   },
   // },
+<<<<<<< HEAD
   // {
   //   accessorKey: "speed_3",
   //   header: () => <div className="text-right">Speed_3</div>,
@@ -200,6 +240,63 @@ export const columns: ColumnDef<DataColumn>[] = [
   //     return <div className="text-right font-medium">{formatted}</div>;
   //   },
   // },
+=======
+  {
+    accessorKey: "speed_3",
+    header: () => <div className="text-right">Speed_3</div>,
+    cell: ({ row }) => {
+      const ave_speed = parseFloat(row.getValue("speed_3"));
+
+      // Format the amount as a distance
+      const formatted = new Intl.NumberFormat("en-UK", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(ave_speed);
+
+      return (
+        <div className="text-right font-medium">
+          {formatted} km<sup>2</sup>/h
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "speed_12",
+    header: () => <div className="text-right">Speed_12</div>,
+    cell: ({ row }) => {
+      const ave_speed = parseFloat(row.getValue("speed_12"));
+
+      // Format the amount as a distance
+      const formatted = new Intl.NumberFormat("en-UK", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(ave_speed);
+
+      return (
+        <div className="text-right font-medium">
+          {formatted} km<sup>2</sup>/h
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "vert_displacement",
+    header: () => <div className="text-right">Vertical Displacement</div>,
+    cell: ({ row }) => {
+      const total_distance = parseFloat(row.getValue("vert_displacement"));
+
+      // Format the amount as a distance
+      const formatted = new Intl.NumberFormat("en-UK", {
+        style: "unit",
+        unit: "kilometer",
+      }).format(total_distance);
+
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+>>>>>>> origin/master
   {
     accessorKey: "travel_distance",
     header: () => <div className="text-right">Travel Distance</div>,
@@ -268,9 +365,7 @@ export const columns: ColumnDef<DataColumn>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(road.road_name as string)
-              }
+              onClick={() => navigator.clipboard.writeText(road.road_name as string)}
             >
               Copy road name
             </DropdownMenuItem>

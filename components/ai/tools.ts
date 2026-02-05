@@ -34,12 +34,12 @@ export const getRoadSegmentsTool = tool(
     latitude,
     longitude,
     road_condition
-  FROM road_segment_conditions
+  FROM central_reg_data
   WHERE id > $1
   ORDER BY id
   LIMIT $2
 `,
-      [lastId, limit]
+      [lastId, limit],
     );
 
     const rows = result.rows;
@@ -58,7 +58,7 @@ export const getRoadSegmentsTool = tool(
       lastId: z.number().optional(),
       limit: z.number().optional(),
     }),
-  }
+  },
 );
 
 /* ============================================================
@@ -68,8 +68,8 @@ export const countRoadSegmentsTool = tool(
   async () => {
     const result = await safeQuery(`
       SELECT COUNT(*)::bigint AS total
-      FROM road_segment_conditions
-    `);
+      FROM central_reg_data
+        `);
 
     return JSON.stringify(result.rows[0]);
   },
@@ -77,7 +77,7 @@ export const countRoadSegmentsTool = tool(
     name: "count_road_segments",
     description: "Returns total number of road segments",
     schema: z.object({}),
-  }
+  },
 );
 
 /* ============================================================
@@ -89,7 +89,7 @@ export const countByConditionTool = tool(
       SELECT
         road_condition,
         COUNT(*)::bigint AS count
-      FROM road_segment_conditions
+      FROM central_reg_data
       GROUP BY road_condition
     `);
 
@@ -99,7 +99,7 @@ export const countByConditionTool = tool(
     name: "count_by_road_condition",
     description: "Counts road segments grouped by condition",
     schema: z.object({}),
-  }
+  },
 );
 
 /* ============================================================
@@ -116,8 +116,13 @@ export const globalRoadStatsTool = tool(
         MAX(iri)                                             AS max_iri,
         AVG(speed)                                           AS avg_speed,
         MIN(speed)                                           AS min_speed,
-        MAX(speed)                                           AS max_speed
-      FROM road_segment_conditions
+        MAX(speed)                                           AS max_speed,
+        COUNT(*) FILTER (WHERE lower(road_condition) = 'very good') AS very_good_segments,
+        COUNT(*) FILTER (WHERE lower(road_condition) = 'good') AS good_segments,
+        COUNT(*) FILTER (WHERE lower(road_condition) = 'fair') AS fair_segments,
+        COUNT(*) FILTER (WHERE lower(road_condition) = 'poor') AS poor_segments,
+        COUNT(*) FILTER (WHERE lower(road_condition) = 'very poor') AS very_poor_segments
+      FROM central_reg_data
     `);
 
     return JSON.stringify(result.rows[0]);
@@ -126,7 +131,7 @@ export const globalRoadStatsTool = tool(
     name: "global_road_statistics",
     description: "Returns high-level statistics for the entire road network",
     schema: z.object({}),
-  }
+  },
 );
 
 /* ============================================================
@@ -138,7 +143,7 @@ export const iriDistributionTool = tool(
       SELECT
         width_bucket(iri, 0, 20, 10) AS bucket,
         COUNT(*)::bigint             AS count
-      FROM road_segment_conditions
+      FROM central_reg_data
       WHERE iri IS NOT NULL
       GROUP BY bucket
       ORDER BY bucket
@@ -150,7 +155,7 @@ export const iriDistributionTool = tool(
     name: "iri_distribution",
     description: "Returns histogram-style distribution of IRI values",
     schema: z.object({}),
-  }
+  },
 );
 
 /* ============================================================
@@ -163,11 +168,11 @@ export const lookupRoadByNameTool = tool(
     const result = await safeQuery(
       `
       SELECT DISTINCT road_name
-      FROM road_segment_conditions
+      FROM central_reg_data
       WHERE road_name ILIKE $1
       LIMIT $2
     `,
-      [`%${input.query}%`, limit]
+      [`%${input.query}%`, limit],
     );
 
     return JSON.stringify({ matches: result.rows });
@@ -179,7 +184,7 @@ export const lookupRoadByNameTool = tool(
       query: z.string(),
       limit: z.number().optional(),
     }),
-  }
+  },
 );
 
 /* ============================================================
@@ -195,11 +200,11 @@ export const roadSummaryTool = tool(
         AVG(iri)                AS avg_iri,
         AVG(speed)              AS avg_speed,
         COUNT(*) FILTER (WHERE road_condition = 'poor' OR road_condition = 'very poor') AS bad_segments
-      FROM road_segment_conditions
+        FROM central_reg_data
       WHERE road_name = $1
       GROUP BY road_name
     `,
-      [input.roadName]
+      [input.roadName],
     );
 
     return JSON.stringify(result.rows[0] ?? null);
@@ -210,7 +215,7 @@ export const roadSummaryTool = tool(
     schema: z.object({
       roadName: z.string(),
     }),
-  }
+  },
 );
 
 /* ============================================================
@@ -229,11 +234,11 @@ export const bboxRoadStatsTool = tool(
         COUNT(*)::bigint AS count,
         AVG(iri)         AS avg_iri,
         AVG(speed)       AS avg_speed
-      FROM road_segment_conditions
+      FROM central_reg_data
       WHERE latitude BETWEEN $1 AND $2
         AND longitude BETWEEN $3 AND $4
     `,
-      [input.minLat, input.maxLat, input.minLng, input.maxLng]
+      [input.minLat, input.maxLat, input.minLng, input.maxLng],
     );
 
     return JSON.stringify(result.rows[0]);
@@ -247,7 +252,7 @@ export const bboxRoadStatsTool = tool(
       minLng: z.number(),
       maxLng: z.number(),
     }),
-  }
+  },
 );
 
 /* ============================================================
@@ -261,8 +266,8 @@ export const dataHealthTool = tool(
         COUNT(*) FILTER (WHERE speed IS NULL) AS speed_missing,
         COUNT(*) FILTER (
           WHERE latitude IS NULL OR longitude IS NULL
-        ) AS location_missing
-      FROM road_segment_conditions
+          ) AS location_missing
+        FROM central_reg_data
     `);
 
     return JSON.stringify(result.rows[0]);
@@ -271,7 +276,7 @@ export const dataHealthTool = tool(
     name: "data_health_check",
     description: "Checks data completeness and missing values",
     schema: z.object({}),
-  }
+  },
 );
 
 /* ============================================================
@@ -279,14 +284,14 @@ export const dataHealthTool = tool(
 ============================================================ */
 export const getRoadSegmentsByConditionTool = tool(
   async (input: { condition: string; lastId?: number; limit?: number }) => {
-    const validConditions = ["Very Good", "Good", "Fair", "Poor", "Very Poor"];
+    const validConditions = ["very good", "good", "fair", "poor", "very poor"];
     const condition = input.condition.toLowerCase();
 
     if (!validConditions.includes(condition)) {
       return JSON.stringify({
         success: false,
         error: `Invalid condition. Must be one of: ${validConditions.join(
-          ", "
+          ", ",
         )}`,
       });
     }
@@ -308,13 +313,13 @@ export const getRoadSegmentsByConditionTool = tool(
         latitude,
         longitude,
         road_condition
-      FROM road_segment_conditions
-      WHERE road_condition = $1
+      FROM central_reg_data
+      WHERE lower(road_condition) = $1
         AND id > $2
       ORDER BY id
       LIMIT $3
     `,
-      [condition, lastId, limit]
+      [condition, lastId, limit],
     );
 
     const rows = result.rows;
@@ -335,7 +340,7 @@ export const getRoadSegmentsByConditionTool = tool(
       condition: z
         .string()
         .describe(
-          "Road condition filter: very good, good, fair, poor, or very poor"
+          "Road condition filter: very good, good, fair, poor, or very poor",
         ),
       lastId: z.number().optional().describe("Cursor for pagination"),
       limit: z
@@ -343,7 +348,7 @@ export const getRoadSegmentsByConditionTool = tool(
         .optional()
         .describe("Number of segments per page (default: 100)"),
     }),
-  }
+  },
 );
 
 /* ============================================================
