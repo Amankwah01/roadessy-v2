@@ -175,11 +175,11 @@ export function AIAssistantSheet({
         <Button
           variant="outline"
           size="icon"
-          className="relative invert hover:bg-gray-200"
+          className="relative dark:hover:bg-gray-200"
           title="Road Inspection AI Assistant"
         >
-          <MessageCircle className="h-4 w-4" />
-          <span className="absolute top-0 right-0 h-2 w-2 bg-black rounded-full animate-pulse" />
+          <MessageCircle className="text-black h-4 w-4 dark:text-white" />
+          <span className="absolute top-0 right-0 h-2 w-2 dark:invert bg-black rounded-full animate-pulse" />
         </Button>
       </SheetTrigger>
 
@@ -192,7 +192,7 @@ export function AIAssistantSheet({
             <MessageCircle className="h-5 w-5" />
             Road Inspection Assistant
           </SheetTitle>
-          <SheetDescription>  
+          <SheetDescription>
             Ask me about road segments, defects, inspections, and repairs
           </SheetDescription>
         </SheetHeader>
