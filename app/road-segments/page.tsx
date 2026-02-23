@@ -13,7 +13,6 @@ import { columns } from "@/components/data/columns";
 // import pool from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-
 export type RoadRow = {
   id: number;
   road_name: string;
@@ -41,10 +40,8 @@ export default async function RoadSegments() {
 
   return (
     <div className="p-4 flex-col">
-      <OverviewDashboard />
-
       <div className="grid grid-cols-1 gap-x-3 mt-1">
-        <Card>
+        <Card className="border-none shadow-none"> 
           <CardHeader>
             <CardTitle className="text-xl">Road Segments</CardTitle>
           </CardHeader>
