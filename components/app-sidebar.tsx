@@ -91,7 +91,7 @@ export function AppSidebar() {
 
   return (
     <>
-      <Sidebar>
+      <Sidebar className="border-none shadow-none h-full">
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel className="flex text-xl gap-x-2 pt-9 pb-10 justify-center items-center">
@@ -106,11 +106,11 @@ export function AppSidebar() {
                     <SidebarMenuItem className="">
                       <SidebarMenuButton
                         asChild
-                        className="py-9 px-6 hover:bg-transparent rounded-lg hover:underline hover:underline-offset-4"
+                        className="py-9 px-3 hover:bg-transparent rounded-lg hover:underline hover:underline-offset-4"
                       >
                         <a
                           href={item.url}
-                          className="text-xl"
+                          className="text-[20px]"
                           onClick={item.onClick}
                         >
                           <item.icon className="scale-150" />

@@ -1,5 +1,5 @@
 import { OverviewDashboard } from "@/components/dashboard-overview";
-import DataTable from "@/components/data/data-table";
+import DataTable from "@/components/data/supa-data-table";
 import { AIAssistantSheet } from "@/components/ai/ai-assistant-sheet";
 import pool, { safeQuery } from "@/lib/db";
 

@@ -1,3 +1,6 @@
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+
 import { Pool, QueryResult, QueryResultRow } from "pg";
 
 const pool = new Pool({
@@ -12,7 +15,7 @@ export default pool;
 
 export async function safeQuery<T extends QueryResultRow = any>(
   query: string,
-  params?: any[]
+  params?: any[],
 ): Promise<QueryResult<T>> {
   return pool.query<T>(query, params);
 }

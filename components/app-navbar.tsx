@@ -73,14 +73,14 @@ export function Navigation() {
           </NavigationMenuItem> */}
           <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
             <NavigationMenuLink asChild>
-              <Link href="/docs">
+              <Link href="/notifications">
                 <BellDot />
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
             <NavigationMenuLink asChild>
-              <Link href="/docs">
+              <Link href="/admin">
                 <User />
               </Link>
             </NavigationMenuLink>

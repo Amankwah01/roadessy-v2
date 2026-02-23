@@ -23,8 +23,8 @@ export type DataColumn = {
   iri?: number | string;
   iri_inst?: number | string;
   iri_smartphone?: number | string;
-  speed_3?: number | string;
-  speed_12?: number | string;
+  speed_inst?: number | string;
+  speed_smartphone?: number | string;
   vert_displacement?: number | string;
   travel_distance?: number | string;
   road_condition?: string;
@@ -308,6 +308,24 @@ export const columns: ColumnDef<DataColumn>[] = [
     },
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("road_type")}</div>
+    ),
+  },
+
+  {
+    accessorKey: "region",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Region
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("region")}</div>
     ),
   },
 

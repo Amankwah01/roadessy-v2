@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-mono`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-mono `}
       >
         <ThemeProvider
           attribute="class"
@@ -38,7 +38,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider>
+          <SidebarProvider
+            style={
+              {
+                "--sidebar-width": "14rem",
+                "--sidebar-width-mobile": "14rem",
+              } as React.CSSProperties
+            }
+          >
             <AppSidebar />
             <main className="w-full tracking-tight">
               <div className="sticky top-0 overflow-hidden w-full flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-background z-10000">
