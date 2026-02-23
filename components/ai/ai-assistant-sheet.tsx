@@ -185,7 +185,7 @@ export function AIAssistantSheet({
 
       <SheetContent
         side="right"
-        className="w-full sm:w-[540px] flex flex-col p-0 z-100"
+        className="w-full sm:w-[540px] flex flex-col p-0 z-30000"
       >
         <SheetHeader className="border-b px-6 py-4">
           <SheetTitle className="flex items-center gap-2">
