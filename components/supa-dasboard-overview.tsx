@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { safeQuery } from "@/lib/db";
 
 type Stats = {
   totalRoads: number;
@@ -32,9 +33,18 @@ export async function OverviewDashboard({ stats }: OverviewDashboardProps) {
   // Use passed stats or fall back to defaults
   const content: { title: string; value: number }[] = [
     { title: "Total Roads", value: stats?.totalRoads ?? defaults.totalRoads },
-    { title: "Total Road Segments", value: stats?.totalSegments ?? defaults.totalSegments },
-    { title: "Inspections Completed", value: stats?.inspectionsCompleted ?? defaults.inspectionsCompleted },
-    { title: "Roads Needing Attention", value: stats?.roadsNeeding ?? defaults.roadsNeeding },
+    {
+      title: "Total Road Segments",
+      value: stats?.totalSegments ?? defaults.totalSegments,
+    },
+    {
+      title: "Inspections Completed",
+      value: stats?.inspectionsCompleted ?? defaults.inspectionsCompleted,
+    },
+    {
+      title: "Roads Needing Attention",
+      value: stats?.roadsNeeding ?? defaults.roadsNeeding,
+    },
     { title: "Average PCI Score", value: stats?.avgPci ?? defaults.avgPci },
   ];
 
