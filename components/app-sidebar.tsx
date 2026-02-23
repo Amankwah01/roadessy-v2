@@ -71,11 +71,11 @@ export function AppSidebar() {
       url: "/reports",
       icon: Text,
     },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: ChartBar,
-    },
+    // {
+    //   title: "Analytics",
+    //   url: "/analytics",
+    //   icon: ChartBar,
+    // },
     {
       title: "Upload",
       url: "/upload",
