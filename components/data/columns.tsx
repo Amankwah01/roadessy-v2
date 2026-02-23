@@ -91,23 +91,23 @@ export const columns: ColumnDef<DataColumn>[] = [
       <div className="capitalize">{row.getValue("road_name")}</div>
     ),
   },
-  {
-    accessorKey: "iri",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          IRI
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase text-center">{row.getValue("iri")}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "iri",
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         IRI
+  //         <ArrowUpDown />
+  //       </Button>
+  //     );
+  //   },
+  //   cell: ({ row }) => (
+  //     <div className="lowercase text-center">{row.getValue("iri")}</div>
+  //   ),
+  // },
   {
     accessorKey: "iri_inst",
     header: ({ column }) => {
@@ -222,10 +222,10 @@ export const columns: ColumnDef<DataColumn>[] = [
   //   },
   // },
   {
-    accessorKey: "speed_3",
-    header: () => <div className="text-right">Speed_3</div>,
+    accessorKey: "speed_inst",
+    header: () => <div className="text-right">Speed Inst</div>,
     cell: ({ row }) => {
-      const ave_speed = parseFloat(row.getValue("speed_3"));
+      const ave_speed = parseFloat(row.getValue("speed_inst"));
 
       // Format the amount as a distance
       const formatted = new Intl.NumberFormat("en-UK", {
@@ -242,10 +242,10 @@ export const columns: ColumnDef<DataColumn>[] = [
     },
   },
   {
-    accessorKey: "speed_12",
-    header: () => <div className="text-right">Speed_12</div>,
+    accessorKey: "speed_smartphone",
+    header: () => <div className="text-right">Speed Smartphone</div>,
     cell: ({ row }) => {
-      const ave_speed = parseFloat(row.getValue("speed_12"));
+      const ave_speed = parseFloat(row.getValue("speed_smartphone"));
 
       // Format the amount as a distance
       const formatted = new Intl.NumberFormat("en-UK", {

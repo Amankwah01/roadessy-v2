@@ -5,7 +5,7 @@ import { columns } from "./columns";
 export default async function DataTable() {
   try {
     const res: any = await safeQuery(
-      "SELECT * FROM central_reg_data ORDER BY id",
+      "SELECT * FROM road_segment_conditions ORDER BY id ASC",
     );
     const rows = (res.rows ?? []) as any[];
 

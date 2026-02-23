@@ -34,7 +34,7 @@ export const getRoadSegmentsTool = tool(
     latitude,
     longitude,
     road_condition
-  FROM central_reg_data
+  FROM road_segment_conditions
   WHERE id > $1
   ORDER BY id
   LIMIT $2
@@ -68,7 +68,7 @@ export const countRoadSegmentsTool = tool(
   async () => {
     const result = await safeQuery(`
       SELECT COUNT(*)::bigint AS total
-      FROM central_reg_data
+      FROM road_segment_conditions
         `);
 
     return JSON.stringify(result.rows[0]);
@@ -89,7 +89,7 @@ export const countByConditionTool = tool(
       SELECT
         road_condition,
         COUNT(*)::bigint AS count
-      FROM central_reg_data
+      FROM road_segment_conditions
       GROUP BY road_condition
     `);
 
@@ -122,7 +122,7 @@ export const globalRoadStatsTool = tool(
         COUNT(*) FILTER (WHERE lower(road_condition) = 'fair') AS fair_segments,
         COUNT(*) FILTER (WHERE lower(road_condition) = 'poor') AS poor_segments,
         COUNT(*) FILTER (WHERE lower(road_condition) = 'very poor') AS very_poor_segments
-      FROM central_reg_data
+      FROM road_segment_conditions
     `);
 
     return JSON.stringify(result.rows[0]);
@@ -143,7 +143,7 @@ export const iriDistributionTool = tool(
       SELECT
         width_bucket(iri, 0, 20, 10) AS bucket,
         COUNT(*)::bigint             AS count
-      FROM central_reg_data
+      FROM road_segment_conditions
       WHERE iri IS NOT NULL
       GROUP BY bucket
       ORDER BY bucket
@@ -168,7 +168,7 @@ export const lookupRoadByNameTool = tool(
     const result = await safeQuery(
       `
       SELECT DISTINCT road_name
-      FROM central_reg_data
+      FROM road_segment_conditions
       WHERE road_name ILIKE $1
       LIMIT $2
     `,
@@ -200,7 +200,7 @@ export const roadSummaryTool = tool(
         AVG(iri)                AS avg_iri,
         AVG(speed)              AS avg_speed,
         COUNT(*) FILTER (WHERE road_condition = 'poor' OR road_condition = 'very poor') AS bad_segments
-        FROM central_reg_data
+        FROM road_segment_conditions
       WHERE road_name = $1
       GROUP BY road_name
     `,
@@ -234,7 +234,7 @@ export const bboxRoadStatsTool = tool(
         COUNT(*)::bigint AS count,
         AVG(iri)         AS avg_iri,
         AVG(speed)       AS avg_speed
-      FROM central_reg_data
+      FROM road_segment_conditions
       WHERE latitude BETWEEN $1 AND $2
         AND longitude BETWEEN $3 AND $4
     `,
@@ -267,7 +267,7 @@ export const dataHealthTool = tool(
         COUNT(*) FILTER (
           WHERE latitude IS NULL OR longitude IS NULL
           ) AS location_missing
-        FROM central_reg_data
+        FROM road_segment_conditions
     `);
 
     return JSON.stringify(result.rows[0]);
@@ -313,7 +313,7 @@ export const getRoadSegmentsByConditionTool = tool(
         latitude,
         longitude,
         road_condition
-      FROM central_reg_data
+      FROM road_segment_conditions
       WHERE lower(road_condition) = $1
         AND id > $2
       ORDER BY id
