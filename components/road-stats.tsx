@@ -1,6 +1,6 @@
 import { ProgressBar } from "./progress";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import pool, { safeQuery } from "@/lib/db";
+import { createSupabaseServerClient } from "@/lib/db";
 
 type StatItem = { title: string; value: number };
 
@@ -48,43 +48,63 @@ export default async function RoadStats({ content }: { content?: StatItem[] }) {
   let roadsNeeding = 150;
   let avgIri = 85;
 
+  const supabase = createSupabaseServerClient();
+
   try {
-    const res1: any = await safeQuery(
-      "SELECT COUNT(DISTINCT road_name) AS c FROM central_reg_data"
-    );
-    totalRoads = Number(res1.rows?.[0]?.c ?? totalRoads);
+    const { data, error } = await supabase
+      .from("central_reg_data")
+      .select("road_name", { count: "exact", head: true });
+
+    if (!error && data) {
+      totalRoads = new Set(data.map((d) => d.road_name)).size;
+    }
   } catch (e) {
     // table may not exist or column differs; keep default
   }
 
   try {
-    const res2: any = await safeQuery(
-      "SELECT COUNT(*) AS c FROM central_reg_data"
-    );
-    totalSegments = Number(res2.rows?.[0]?.c ?? totalSegments);
+    const { count, error } = await supabase
+      .from("central_reg_data")
+      .select("*", { count: "exact", head: true });
+
+    if (!error && count !== null) {
+      totalSegments = count;
+    }
   } catch (e) {}
 
   try {
-    const res3: any = await safeQuery(
-      "SELECT COUNT(*) AS c FROM inspections WHERE status = 'completed'"
-    );
-    inspectionsCompleted = Number(res3.rows?.[0]?.c ?? inspectionsCompleted);
+    const { count, error } = await supabase
+      .from("inspections")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "completed");
+
+    if (!error && count !== null) {
+      inspectionsCompleted = count;
+    }
   } catch (e) {}
 
   try {
-    const res4: any = await safeQuery(
-      "SELECT COUNT(*) AS c FROM central_reg_data WHERE iri IS NOT NULL AND iri > 150"
-    );
-    roadsNeeding = Number(res4.rows?.[0]?.c ?? roadsNeeding);
+    const { count, error } = await supabase
+      .from("central_reg_data")
+      .select("*", { count: "exact", head: true })
+      .gt("iri", 150)
+      .not("iri", "is", null);
+
+    if (!error && count !== null) {
+      roadsNeeding = count;
+    }
   } catch (e) {}
 
   try {
-    const res5: any = await safeQuery(
-      "SELECT AVG(iri) AS a FROM central_reg_data WHERE iri IS NOT NULL"
-    );
-    const raw = res5.rows?.[0]?.a;
-    avgIri =
-      raw !== null && raw !== undefined ? Math.round(Number(raw)) : avgIri;
+    const { data, error } = await supabase
+      .from("central_reg_data")
+      .select("iri")
+      .not("iri", "is", null);
+
+    if (!error && data && data.length > 0) {
+      const sum = data.reduce((acc, row) => acc + (row.iri || 0), 0);
+      avgIri = Math.round(sum / data.length);
+    }
   } catch (e) {}
 
   const data: StatItem[] = [

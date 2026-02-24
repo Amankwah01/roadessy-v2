@@ -1,26 +1,140 @@
-import Image from "next/image";
+"use client";
+
+import { ImageIcon, FileText, X } from "lucide-react";
+import * as React from "react";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
+} from "@/components/ui/file-upload";
 
-export default function Home() {
+export const title = "Multiple File Upload Fields";
+
+const Example = () => {
+  const [images, setImages] = React.useState<File[]>([]);
+  const [documents, setDocuments] = React.useState<File[]>([]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Images:", images);
+    console.log("Documents:", documents);
+    alert(
+      `Submitted ${images.length} image(s) and ${documents.length} document(s)`,
+    );
+  };
+
   return (
-    <div className="flex items-center h-[90vh] justify-center font-sans dark:bg-black">
-      <main className="flex w-full flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <div className="grid w-full h-full items-center gap-3 border rounded-lg p-6">
-          <div className="w-full flex flex-col items-center gap-3">
-            <Label htmlFor="upload_file">Upload File</Label>
-            <ButtonGroup>
-              <Input id="upload_file" type="file" />
-              <Button variant="outline" aria-label="Upload File">
-                <Upload />
-              </Button>
-            </ButtonGroup>
-          </div>
+    <div className="flex h-[90vh] items-center justify-center">
+      <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="title">Project Title</Label>
+          <Input
+            id="title"
+            name="title"
+            placeholder="Enter project title"
+            required
+          />
         </div>
-      </main>
+
+        <div className="space-y-2">
+          <Label>Project Images</Label>
+          <FileUpload
+            value={images}
+            onValueChange={setImages}
+            accept="image/*"
+            maxFiles={4}
+            maxSize={5 * 1024 * 1024}
+            multiple
+          >
+            <FileUploadDropzone className="py-4 h-28">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="size-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  Drop images or
+                </span>
+                <FileUploadTrigger asChild>
+                  <Button variant="link" size="sm" className="h-auto p-0">
+                    browse
+                  </Button>
+                </FileUploadTrigger>
+              </div>
+            </FileUploadDropzone>
+            <FileUploadList>
+              {images.map((file, index) => (
+                <FileUploadItem key={index} value={file} className="p-2">
+                  <FileUploadItemPreview className="size-8" />
+                  <FileUploadItemMetadata size="sm" />
+                  <FileUploadItemDelete asChild>
+                    <Button variant="ghost" size="icon" className="size-6">
+                      <X className="size-3" />
+                    </Button>
+                  </FileUploadItemDelete>
+                </FileUploadItem>
+              ))}
+            </FileUploadList>
+          </FileUpload>
+          <p className="text-xs text-muted-foreground">
+            Up to 4 images, 5MB each
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Supporting Documents</Label>
+          <FileUpload
+            value={documents}
+            onValueChange={setDocuments}
+            accept=".pdf,.doc,.docx"
+            maxFiles={3}
+            maxSize={10 * 1024 * 1024}
+            multiple
+          >
+            <FileUploadDropzone className="py-4  h-28">
+              <div className="flex items-center gap-2">
+                <FileText className="size-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  Drop documents or
+                </span>
+                <FileUploadTrigger asChild>
+                  <Button variant="link" size="sm" className="h-auto p-0">
+                    browse
+                  </Button>
+                </FileUploadTrigger>
+              </div>
+            </FileUploadDropzone>
+            <FileUploadList>
+              {documents.map((file, index) => (
+                <FileUploadItem key={index} value={file} className="p-2">
+                  <FileUploadItemPreview className="size-8" />
+                  <FileUploadItemMetadata size="sm" />
+                  <FileUploadItemDelete asChild>
+                    <Button variant="ghost" size="icon" className="size-6">
+                      <X className="size-3" />
+                    </Button>
+                  </FileUploadItemDelete>
+                </FileUploadItem>
+              ))}
+            </FileUploadList>
+          </FileUpload>
+          <p className="text-xs text-muted-foreground">
+            Up to 3 documents, 10MB each
+          </p>
+        </div>
+
+        <Button type="submit" className="w-full">
+          Create Project
+        </Button>
+      </form>
     </div>
   );
-}
+};
+
+export default Example;

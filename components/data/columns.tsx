@@ -88,26 +88,12 @@ export const columns: ColumnDef<DataColumn>[] = [
     accessorKey: "road_name",
     header: "Road Name",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("road_name")}</div>
+      <div className="capitalize text-center font-medium ">
+        {row.getValue("road_name")}
+      </div>
     ),
   },
-  // {
-  //   accessorKey: "iri",
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //       >
-  //         IRI
-  //         <ArrowUpDown />
-  //       </Button>
-  //     );
-  //   },
-  //   cell: ({ row }) => (
-  //     <div className="lowercase text-center">{row.getValue("iri")}</div>
-  //   ),
-  // },
+  
   {
     accessorKey: "iri_inst",
     header: ({ column }) => {
@@ -126,101 +112,26 @@ export const columns: ColumnDef<DataColumn>[] = [
     ),
   },
 
-  {
-    accessorKey: "iri_smartphone",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          IRI Smart Phone
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase text-center">
-        {row.getValue("iri_smartphone")}
-      </div>
-    ),
-  },
   // {
-  //   accessorKey: "speed",
-  //   header: () => <div className="text-right">Speed</div>,
-  //   cell: ({ row }) => {
-  //     const ave_speed = parseFloat(row.getValue("speed"));
-  //
-  //     // Format the amount as a distance
-  //     const formatted = new Intl.NumberFormat("en-UK", {
-  //       style: "decimal",
-  //       minimumFractionDigits: 2,
-  //       maximumFractionDigits: 2,
-  //     }).format(ave_speed);
-  //
+  //   accessorKey: "iri_smartphone",
+  //   header: ({ column }) => {
   //     return (
-  //       <div className="text-right font-medium">
-  //         {formatted} km<sup>2</sup>/h
-  //       </div>
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         IRI Smart Phone
+  //         <ArrowUpDown />
+  //       </Button>
   //     );
   //   },
+  //   cell: ({ row }) => (
+  //     <div className="lowercase text-center">
+  //       {row.getValue("iri_smartphone")}
+  //     </div>
+  //   ),
   // },
-  // conflict markers removed - keep expanded speed_* columns below
-  // {
-  //   accessorKey: "speed_3",
-  //   header: () => <div className="text-right">Speed_3</div>,
-  //   cell: ({ row }) => {
-  //     const ave_speed = parseFloat(row.getValue("speed_3"));
-
-  //     // Format the amount as a distance
-  //     const formatted = new Intl.NumberFormat("en-UK", {
-  //       style: "decimal",
-  //       minimumFractionDigits: 2,
-  //       maximumFractionDigits: 2,
-  //     }).format(ave_speed);
-
-  //     return (
-  //       <div className="text-right font-medium">
-  //         {formatted} km<sup>2</sup>/h
-  //       </div>
-  //     );
-  //   },
-  // },
-  // {
-  //   accessorKey: "speed_12",
-  //   header: () => <div className="text-right">Speed_12</div>,
-  //   cell: ({ row }) => {
-  //     const ave_speed = parseFloat(row.getValue("speed_12"));
-
-  //     // Format the amount as a distance
-  //     const formatted = new Intl.NumberFormat("en-UK", {
-  //       style: "decimal",
-  //       minimumFractionDigits: 2,
-  //       maximumFractionDigits: 2,
-  //     }).format(ave_speed);
-
-  //     return (
-  //       <div className="text-right font-medium">
-  //         {formatted} km<sup>2</sup>/h
-  //       </div>
-  //     );
-  //   },
-  // },
-  // {
-  //   accessorKey: "vert_displacement",
-  //   header: () => <div className="text-right">Vertical Displacement</div>,
-  //   cell: ({ row }) => {
-  //     const total_distance = parseFloat(row.getValue("vert_displacement"));
-
-  //     // Format the amount as a distance
-  //     const formatted = new Intl.NumberFormat("en-UK", {
-  //       style: "unit",
-  //       unit: "kilometer",
-  //     }).format(total_distance);
-
-  //     return <div className="text-right font-medium">{formatted}</div>;
-  //   },
-  // },
+  
   {
     accessorKey: "speed_inst",
     header: () => <div className="text-right">Speed Inst</div>,
@@ -241,26 +152,26 @@ export const columns: ColumnDef<DataColumn>[] = [
       );
     },
   },
-  {
-    accessorKey: "speed_smartphone",
-    header: () => <div className="text-right">Speed Smartphone</div>,
-    cell: ({ row }) => {
-      const ave_speed = parseFloat(row.getValue("speed_smartphone"));
+  // {
+  //   accessorKey: "speed_smartphone",
+  //   header: () => <div className="text-right">Speed Smartphone</div>,
+  //   cell: ({ row }) => {
+  //     const ave_speed = parseFloat(row.getValue("speed_smartphone"));
 
-      // Format the amount as a distance
-      const formatted = new Intl.NumberFormat("en-UK", {
-        style: "decimal",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(ave_speed);
+  //     // Format the amount as a distance
+  //     const formatted = new Intl.NumberFormat("en-UK", {
+  //       style: "decimal",
+  //       minimumFractionDigits: 2,
+  //       maximumFractionDigits: 2,
+  //     }).format(ave_speed);
 
-      return (
-        <div className="text-right font-medium">
-          {formatted} km<sup>2</sup>/h
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="text-right font-medium">
+  //         {formatted} km<sup>2</sup>/h
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "vert_displacement",
     header: () => <div className="text-right">Vertical Displacement</div>,
@@ -273,7 +184,7 @@ export const columns: ColumnDef<DataColumn>[] = [
         unit: "kilometer",
       }).format(total_distance);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-center font-medium">{formatted}</div>;
     },
   },
   // end merge cleanup
@@ -289,7 +200,7 @@ export const columns: ColumnDef<DataColumn>[] = [
         unit: "kilometer",
       }).format(total_distance);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-center font-medium">{formatted}</div>;
     },
   },
 
@@ -307,7 +218,9 @@ export const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("road_type")}</div>
+      <div className="capitalize text-center font-medium">
+        {row.getValue("road_type")}
+      </div>
     ),
   },
 
@@ -325,7 +238,9 @@ export const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("region")}</div>
+      <div className="capitalize text-center font-medium">
+        {row.getValue("region")}
+      </div>
     ),
   },
 
@@ -343,7 +258,9 @@ export const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("road_condition")}</div>
+      <div className="lowercase text-center font-medium">
+        {row.getValue("road_condition")}
+      </div>
     ),
   },
   {

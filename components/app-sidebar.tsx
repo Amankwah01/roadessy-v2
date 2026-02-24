@@ -15,14 +15,17 @@ import {
   Sheet,
   Text,
   Upload,
+  User2,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -37,8 +40,6 @@ interface SidebarItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   onClick?: () => void;
 }
-
-
 
 export function AppSidebar() {
   // Hook MUST be inside the component
@@ -91,13 +92,27 @@ export function AppSidebar() {
 
   return (
     <>
-      <Sidebar className="border-none shadow-none h-full">
+      <Sidebar className="border-none shadow-none h-full" collapsible="icon">
+        <SidebarHeader className="">
+          <SidebarMenu className="">
+            <SidebarMenuItem className="">
+              <SidebarMenuButton
+                asChild
+                className="hover:bg-transparent rounded-lg 
+                hover:underline hover:underline-offset-4 
+                flex items-center justify-center pt-4"
+              >
+                <a href="/" className="text-[20px]">
+                  <MapPinCheck className="scale-150" />
+                  <span className="text-2xl">Roadessy</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="flex text-xl gap-x-2 pt-9 pb-10 justify-center items-center">
-              <MapPinCheck className="scale-150" />
-              Roadessy
-            </SidebarGroupLabel>
+            {/* <SidebarGroupLabel className="flex text-xl gap-x-2 pt-9 pb-10 justify-center items-center"></SidebarGroupLabel> */}
             <Separator className="" />
             <SidebarGroupContent>
               <SidebarMenu className="">
@@ -125,6 +140,15 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <User2 /> Username
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </>

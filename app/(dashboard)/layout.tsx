@@ -39,6 +39,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SidebarProvider
+        
             style={
               {
                 "--sidebar-width": "14rem",

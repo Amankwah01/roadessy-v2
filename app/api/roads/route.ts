@@ -1,27 +1,31 @@
 import { NextResponse } from "next/server";
-import { safeQuery } from "@/lib/db";
+import { createSupabaseServerClient } from "@/lib/db";
 
 export async function GET() {
+  const supabase = createSupabaseServerClient();
   try {
-    const { rows } = await safeQuery(`
-      SELECT jsonb_build_object(
-        'type', 'FeatureCollection',
-        'features', jsonb_agg(
-          jsonb_build_object(
-            'type', 'Feature',
-            'geometry', ST_AsGeoJSON(geom)::jsonb,
-            'properties', jsonb_build_object(
-              'id', gid,
-              'road_name', roadname,
-              'condition', condition
-            )
-          )
-        )
-      ) AS geojson
-          FROM roads_ghana_final
-    `);
+    // Fetch roads data from Supabase
+    const { data, error } = await supabase
+      .from('roads_ghana_final')
+      .select('gid, roadname, condition');
 
-    return NextResponse.json(rows[0].geojson);
+    if (error) throw error;
+
+    // Build GeoJSON manually
+    const geojson = {
+      type: 'FeatureCollection',
+      features: (data || []).map((road: any) => ({
+        type: 'Feature',
+        geometry: null, // Would need PostGIS extension for actual geometry
+        properties: {
+          id: road.gid,
+          road_name: road.roadname,
+          condition: road.condition
+        }
+      }))
+    };
+
+    return NextResponse.json(geojson);
   } catch (err) {
     console.error(err);
     return NextResponse.json(

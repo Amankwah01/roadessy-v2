@@ -1,16 +1,19 @@
-import { OverviewDashboard } from "@/components/dashboard-overview";
+import { OverviewDashboard } from "@/components/supa-dasboard-overview";
 import DataTable from "@/components/data/supa-data-table";
-import { AIAssistantSheet } from "@/components/ai/ai-assistant-sheet";
-import pool, { safeQuery } from "@/lib/db";
 import DataTableClient from "@/components/data/data-table-client";
 import { columns } from "@/components/data/columns";
+import { createSupabaseServerClient } from "@/lib/db";
 
 async function fetchDashboardData() {
+  const supabase = createSupabaseServerClient();
   try {
-    const res = await safeQuery(
-      `SELECT id, road_name, iri, iri_inst, iri_smartphone, speed_inst, speed_smartphone, vert_displacement, travel_distance, road_type, region, road_condition, pci_score FROM central_reg_data ORDER BY id`
-    );
-    return res.rows ?? [];
+    const { data, error } = await supabase
+      .from('iri_sample')
+      .select('id, road_name, iri_inst, iri_smartphone, speed_inst, speed_smartphone, vert_displacement, travel_distance, road_type, region, road_condition')
+      .order('id');
+    
+    if (error) throw error;
+    return data ?? [];
   } catch (error) {
     console.error("Dashboard DB fetch error:", error);
     return [];
@@ -18,22 +21,48 @@ async function fetchDashboardData() {
 }
 
 async function fetchStats() {
+  const supabase = createSupabaseServerClient();
   try {
-    // Fetch all stats in parallel for efficiency
-    const [totalRoadsRes, totalSegmentsRes, inspectionsRes, roadsNeedingRes, avgPciRes] = await Promise.all([
-      safeQuery("SELECT COUNT(DISTINCT road_name) AS c FROM central_reg_data"),
-      safeQuery("SELECT COUNT(*) AS c FROM central_reg_data"),
-      safeQuery("SELECT COUNT(*) AS c FROM central_reg_data WHERE road_condition IS NOT NULL"),
-      safeQuery("SELECT COUNT(*) AS c FROM central_reg_data WHERE iri IS NOT NULL AND iri > 150"),
-      safeQuery("SELECT AVG(pci_score) AS a FROM central_reg_data WHERE pci_score IS NOT NULL"),
+    // Fetch all required data
+    const [
+      { data: roadsData, error: error1 },
+      { data: iriData, error: error4 },
+      { data: pciData, error: error5 }
+    ] = await Promise.all([
+      // Get all road names and conditions
+      supabase.from('iri_sample').select('road_name, road_condition'),
+      // Get all IRI values
+      supabase.from('iri_sample').select('iri_inst').not('iri_inst', 'is', null),
+      // Get all PCI scores
+      supabase.from('iri_sample').select('pci_score').not('pci_score', 'is', null),
     ]);
 
+    // Calculate Total Roads (unique road names - normalized)
+    const uniqueRoads = new Set(roadsData?.map(r => r.road_name?.trim().toLowerCase()));
+    const totalRoads = uniqueRoads.size || 0;
+
+    // Total Segments
+    const totalSegments = roadsData?.length || 0;
+
+    // Inspections Completed (rows with road_condition)
+    const inspectionsCompleted = roadsData?.filter(r => r.road_condition !== null).length || 0;
+
+    // Roads Needing Attention (IRI > 150)
+    const roadsNeeding = iriData?.filter(r => r.iri_inst > 10).length || 0;
+
+    // Average PCI
+    let avgPci = 0;
+    if (pciData && pciData.length > 0) {
+      const sum = pciData.reduce((acc, r) => acc + (r.pci_score || 0), 0);
+      avgPci = Math.round(sum / pciData.length);
+    }
+
     return {
-      totalRoads: Number(totalRoadsRes.rows?.[0]?.c ?? 0),
-      totalSegments: Number(totalSegmentsRes.rows?.[0]?.c ?? 0),
-      inspectionsCompleted: Number(inspectionsRes.rows?.[0]?.c ?? 0),
-      roadsNeeding: Number(roadsNeedingRes.rows?.[0]?.c ?? 0),
-      avgPci: Math.round(Number(avgPciRes.rows?.[0]?.a ?? 0)),
+      totalRoads,
+      totalSegments,
+      inspectionsCompleted,
+      roadsNeeding,
+      avgPci,
     };
   } catch (error) {
     console.error("Stats fetch error:", error);
