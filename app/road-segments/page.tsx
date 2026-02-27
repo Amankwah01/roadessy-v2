@@ -26,7 +26,7 @@ async function fetchRoadSegmentsData() {
   try {
     const { data, error } = await supabase
       .from('iri_sample')
-      .select('id, road_name, iri, iri_inst, iri_smartphone, speed_inst, speed_smartphone, vert_displacement, travel_distance, road_type, region, road_condition, pci_score')
+      .select('id, road_name, iri_inst, iri_smartphone, speed_inst, speed_smartphone, vert_displacement, travel_distance, road_type, region, road_condition')
       .order('id');
     
     if (error) throw error;
@@ -43,11 +43,11 @@ async function fetchStats() {
     const [
       { count: totalCount },
       { data: conditionData },
-      { data: pciData }
+      // { data: pciData }
     ] = await Promise.all([
       supabase.from('iri_sample').select('*', { count: 'exact', head: true }),
       supabase.from('iri_sample').select('road_condition').not('road_condition', 'is', null),
-      supabase.from('iri_sample').select('pci_score').not('pci_score', 'is', null)
+      // supabase.from('iri_sample').select('pci_score').not('pci_score', 'is', null)
     ]);
 
     // Group by condition
@@ -58,14 +58,14 @@ async function fetchStats() {
     }, {});
 
     // Calculate average PCI
-    const avgPci = pciData && pciData.length > 0
-      ? Math.round(pciData.reduce((sum, row) => sum + (row.pci_score || 0), 0) / pciData.length)
-      : 0;
+      // const avgPci = pciData && pciData.length > 0
+      //   ? Math.round(pciData.reduce((sum, row) => sum + (row.pci_score || 0), 0) / pciData.length)
+      //   : 0;
 
     return {
       total: totalCount || 0,
       byCondition: Object.entries(byCondition).map(([road_condition, count]) => ({ road_condition, count })),
-      avgPci,
+      // avgPci,
     };
   } catch (error) {
     console.error("Stats fetch error:", error);
@@ -79,24 +79,29 @@ export default async function RoadSegments() {
 
   return (
     <div className="p-4 flex-col">
+      <p className="text-2xl font-semibold my-5">Road Segments</p>
       <div className="grid grid-cols-1 gap-x-3 mt-1">
-        <Card className="border-none shadow-none"> 
+        {roadSegmentsData.length > 0 ? (
+          <DataTableClient columns={columns} data={roadSegmentsData} />
+        ) : (
+          <DataTable />
+        )}
+        {/* <Card className="border-none shadow-none">
           <CardHeader>
-            <CardTitle className="text-xl">Road Segments</CardTitle>
+            <CardTitle className="text-xl"></CardTitle>
           </CardHeader>
 
-          <CardContent className="grid gap-2">
-            {roadSegmentsData.length > 0 ? (
-              <DataTableClient columns={columns} data={roadSegmentsData} />
-            ) : (
-              <DataTable />
-            )}
-          </CardContent>
+          <CardContent className="grid gap-2"></CardContent>
 
-          <CardFooter>
-          </CardFooter>
-        </Card>
+          <CardFooter></CardFooter>
+        </Card> */}
       </div>
     </div>
   );
 }
+
+
+// <div className="">
+//   {/* 3. Pass the detailed rows to the data table */}
+//   <DataTable />
+// </div>

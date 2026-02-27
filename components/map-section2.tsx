@@ -55,8 +55,8 @@ export function Map({
         const roadsData = await response.json();
 
         // Prevent duplicate source
-        if (!map.current.getSource("roads")) {
-          map.current.addSource("roads", {
+        if (!map.current.getSource("road")) {
+          map.current.addSource("road", {
             type: "geojson",
             data: roadsData,
           });
@@ -67,7 +67,7 @@ export function Map({
           map.current.addLayer({
             id: "roads-layer",
             type: "line",
-            source: "roads",
+            source: "road",
             paint: {
               "line-width": 3,
               "line-color": "#ff5a1f",

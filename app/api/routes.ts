@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const supabase = createSupabaseServerClient();
   try {
     const { data, error } = await supabase
-      .from("road_roughness_data")
+      .from("api_roads_ghana")
       .select("*")
       .limit(100);
 
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     const { data, error } = await supabase
-      .from("your_table_name")
+      .from("api_roads_ghana")
       .insert([{ name }])
       .select()
       .single();

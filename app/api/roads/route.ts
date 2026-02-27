@@ -6,8 +6,8 @@ export async function GET() {
   try {
     // Fetch roads data from Supabase
     const { data, error } = await supabase
-      .from('roads_ghana_final')
-      .select('gid, roadname, condition');
+      .from('api_roads_ghana')
+      .select('*');
 
     if (error) throw error;
 
@@ -16,20 +16,22 @@ export async function GET() {
       type: 'FeatureCollection',
       features: (data || []).map((road: any) => ({
         type: 'Feature',
-        geometry: null, // Would need PostGIS extension for actual geometry
+        geometry: road.geom, // Would need PostGIS extension for actual geometry
         properties: {
           id: road.gid,
-          road_name: road.roadname,
-          condition: road.condition
+          road_name: road.name,
+          road_district: road.road_condition,
+          road_region: road.region,
+          road_type: road.fclass
         }
       }))
     };
 
     return NextResponse.json(geojson);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching roads:", err);
     return NextResponse.json(
-      { error: "Failed to load roads" },
+      { error: "Failed to load roads", details: err instanceof Error ? err.message : String(err) },
       { status: 500 },
     );
   }

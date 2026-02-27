@@ -33,6 +33,7 @@ import {
 import { Separator } from "./ui/separator";
 import { SettingsDialog } from "./settings-dialog";
 import React from "react";
+import UserHeader from "./user-header";
 
 interface SidebarItem {
   title: string;
@@ -100,7 +101,7 @@ export function AppSidebar() {
                 asChild
                 className="hover:bg-transparent rounded-lg 
                 hover:underline hover:underline-offset-4 
-                flex items-center justify-center pt-4"
+                flex items-center justify-center pt-4 h-[20vh]"
               >
                 <a href="/" className="text-[20px]">
                   <MapPinCheck className="scale-150" />
@@ -142,10 +143,22 @@ export function AppSidebar() {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
+            <SidebarMenuItem className="flex w-ful justify-between items-center">
+              <UserHeader />
+              {/* <SidebarMenuButton>
+                {/* <SidebarMenuButton>
+                  asChild
+                  //   className="hover:bg-transparent rounded-lg
+                  // hover:underline hover:underline-offset-4
+                  // flex items-center justify-center pt-4 h-[20vh]"
+                >
+                  <a href="/user" className="text-[20px]">
+                    <User2 />
+                    <span className="text-lg">Username</span>
+                  </a>
+                </SidebarMenuButton>
                 <User2 /> Username
-              </SidebarMenuButton>
+              </SidebarMenuButton> */}
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

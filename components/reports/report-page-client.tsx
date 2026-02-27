@@ -3,7 +3,6 @@
 "use client"; // <<< CRITICAL: This directive makes this file a Client Component
 
 import dynamic from "next/dynamic";
-import React from "react";
 import New from "@/components/reports/new";
 
 // --- Use Dynamic Import for PDFViewer within the Client Component ---

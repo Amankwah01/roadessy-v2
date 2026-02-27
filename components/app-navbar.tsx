@@ -23,6 +23,7 @@ import {
 import { Button } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { AIAssistantSheet } from "./ai/ai-assistant-sheet";
+import UserHeader from "./user-header";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -64,35 +65,50 @@ const components: { title: string; href: string; description: string }[] = [
 export function Navigation() {
   const isMobile = useIsMobile();
   return (
-    <nav className="sticky top-0 overflow-hidden w-full flex justify-end items-center bg-background px-2 gap-x-2 z-0000">
-      {/* Right Side */}
-      <NavigationMenu viewport={isMobile}>
-        <NavigationMenuList className="flex-wrap">
-          {/* <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+    <nav className="sticky top-0 overflow-hidden w-full flex justify-between items-center bg-background px-2 gap-x-2 z-0000">
+      <div className="">
+        {/* Right Side */}
+        {/* <NavigationMenu viewport={isMobile}>
+          <NavigationMenuList className="flex-wrap">
+            <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+            <SearchInput />
+          </NavigationMenuItem>
+            <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+              <NavigationMenuLink asChild>
+                <Link href="/admin">
+                  <User />
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu> */}
+      </div>
+      <div className="">
+        {/* Right Side */}
+        <NavigationMenu viewport={isMobile}>
+          <NavigationMenuList className="flex-wrap">
+            {/* <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
             <SearchInput />
           </NavigationMenuItem> */}
-          <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
-            <NavigationMenuLink asChild>
-              <Link href="/notifications">
-                <BellDot />
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
-            <NavigationMenuLink asChild>
-              <Link href="/admin">
-                <User />
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
-            <ModeToggle />
-          </NavigationMenuItem>
-          <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
-            <AIAssistantSheet />
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+            <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+              <NavigationMenuLink asChild>
+                <Link href="/notifications">
+                  <BellDot />
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+              <ModeToggle />
+            </NavigationMenuItem>
+            <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+              <AIAssistantSheet />
+            </NavigationMenuItem>
+            {/* <NavigationMenuItem className="bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
+              <UserHeader />
+            </NavigationMenuItem> */}
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </nav>
   );
 }
